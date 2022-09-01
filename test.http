@@ -3,8 +3,7 @@ Content-Type: application/json
 
 {
   "file_name": "apache_logs.txt",
-  "cmd2": "filter",
-  "value2": "1.22.35.226",
-  "cmd1": "filter",
-  "value1": "favicon.ico"
+
+  "cmd1": "regex",
+  "value1": "images\/\\w+\\.jpg"
 }

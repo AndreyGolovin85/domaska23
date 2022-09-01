@@ -1,4 +1,6 @@
 import os
+import re
+from typing import List
 
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import BadRequest
@@ -9,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
-def do_cmd(cmd, value, data) -> list:
+def do_cmd(cmd: str, value: str, data: List[str]) -> list:
     if cmd == "filter":
         result = filter(lambda record: value in record, data)
     elif cmd == "map":
@@ -22,16 +24,21 @@ def do_cmd(cmd, value, data) -> list:
         result = sorted(data, reverse=reverse)
     elif cmd == "limit":
         result = data[:int(value)]
+    elif cmd == "regex":
+        # cmd1=regex value1=images\/\w+\.png
+        regex = re.compile(value)
+        result = list(filter(lambda v: regex.search(v), data))
+        print(type(result))
     else:
         raise BadRequest
     return list(result)
 
 
-def do_query(params) -> list:
+def do_query(params: dict) -> list:
     with open(os.path.join(DATA_DIR, params["file_name"])) as file:
         file_data = file.readlines()
-    res = file_data
-    
+    res: list = file_data
+
     if "cmd1" in params.keys():
         res = do_cmd(params["cmd1"], params["value1"], res)
     if "cmd2" in params.keys():
